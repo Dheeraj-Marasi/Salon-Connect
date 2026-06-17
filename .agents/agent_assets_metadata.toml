@@ -1,0 +1,38 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "e6VKmRRGQuh0lEsQtPYke"
+uri = "file://artifacts/salon-marketplace/public/images/hero.png"
+type = "image"
+title = "Salon Hero Image"
+
+[[generated]]
+id = "ZSyiDmi4_ry5rzNDYm1Fd"
+uri = "file://artifacts/salon-marketplace/public/images/salon-1.png"
+type = "image"
+title = "Luxury Hair Salon"
+
+[[generated]]
+id = "jaLuim6nKhuZKw9yRfT5d"
+uri = "file://artifacts/salon-marketplace/public/images/salon-2.png"
+type = "image"
+title = "Premium Spa Room"
+
+[[generated]]
+id = "zEqe_IFNYq6v69oq5yzKs"
+uri = "file://artifacts/salon-marketplace/public/images/salon-3.png"
+type = "image"
+title = "Bridal Makeup Studio"
+
+[[generated]]
+id = "ie2iIhfrTJC8BWXdT9Pc8"
+uri = "file://artifacts/salon-marketplace/public/images/salon-4.png"
+type = "image"
+title = "Modern Nail Studio"
+
+[[generated]]
+id = "UH5fSPVlS-fTrjsiIrxip"
+uri = "file://artifacts/salon-marketplace/public/images/salon-5.png"
+type = "image"
+title = "Aesthetic Clinic"

@@ -1,22 +1,31 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Hyderabad Beauty Salon Marketplace API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: salons
+    description: Salon listings
+  - name: services
+    description: Salon services
+  - name: bookings
+    description: Appointment bookings
+  - name: reviews
+    description: Salon reviews
+  - name: categories
+    description: Service categories
+
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +33,320 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /salons:
+    get:
+      operationId: listSalons
+      tags: [salons]
+      summary: List all salons
+      parameters:
+        - name: category
+          in: query
+          schema:
+            type: string
+        - name: area
+          in: query
+          schema:
+            type: string
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: minRating
+          in: query
+          schema:
+            type: number
+      responses:
+        "200":
+          description: List of salons
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Salon"
+    post:
+      operationId: createSalon
+      tags: [salons]
+      summary: Create a new salon
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SalonInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Salon"
+
+  /salons/{id}:
+    get:
+      operationId: getSalon
+      tags: [salons]
+      summary: Get a salon by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Salon details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SalonDetail"
+        "404":
+          description: Not found
+
+  /salons/featured:
+    get:
+      operationId: getFeaturedSalons
+      tags: [salons]
+      summary: Get featured/top salons
+      responses:
+        "200":
+          description: Featured salons
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Salon"
+
+  /salons/stats:
+    get:
+      operationId: getSalonStats
+      tags: [salons]
+      summary: Get marketplace stats overview
+      responses:
+        "200":
+          description: Stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MarketplaceStats"
+
+  /salons/{id}/services:
+    get:
+      operationId: getSalonServices
+      tags: [services]
+      summary: Get all services for a salon
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of services
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Service"
+
+  /services:
+    get:
+      operationId: listServices
+      tags: [services]
+      summary: List all services (optionally filtered)
+      parameters:
+        - name: category
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Services list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Service"
+    post:
+      operationId: createService
+      tags: [services]
+      summary: Create a service
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ServiceInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Service"
+
+  /bookings:
+    get:
+      operationId: listBookings
+      tags: [bookings]
+      summary: List bookings
+      parameters:
+        - name: salonId
+          in: query
+          schema:
+            type: integer
+        - name: customerName
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Bookings list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Booking"
+    post:
+      operationId: createBooking
+      tags: [bookings]
+      summary: Book an appointment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookingInput"
+      responses:
+        "201":
+          description: Booking created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Booking"
+
+  /bookings/{id}:
+    get:
+      operationId: getBooking
+      tags: [bookings]
+      summary: Get booking by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Booking
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Booking"
+    patch:
+      operationId: updateBookingStatus
+      tags: [bookings]
+      summary: Update booking status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookingStatusUpdate"
+      responses:
+        "200":
+          description: Updated booking
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Booking"
+
+  /salons/{id}/reviews:
+    get:
+      operationId: getSalonReviews
+      tags: [reviews]
+      summary: Get reviews for a salon
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Reviews
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Review"
+    post:
+      operationId: createReview
+      tags: [reviews]
+      summary: Post a review
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReviewInput"
+      responses:
+        "201":
+          description: Review posted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Review"
+
+  /categories:
+    get:
+      operationId: listCategories
+      tags: [categories]
+      summary: List service categories
+      responses:
+        "200":
+          description: Categories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Category"
+
+  /areas:
+    get:
+      operationId: listAreas
+      tags: [salons]
+      summary: List Hyderabad areas with salon counts
+      responses:
+        "200":
+          description: Areas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Area"
+
 components:
   schemas:
     HealthStatus:
@@ -31,6 +354,252 @@ components:
       properties:
         status:
           type: string
-      required:
-        - status
+      required: [status]
 
+    Salon:
+      type: object
+      required: [id, name, area, address, rating, reviewCount, imageUrl, categories, priceRange, openNow]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        area:
+          type: string
+        address:
+          type: string
+        rating:
+          type: number
+        reviewCount:
+          type: integer
+        imageUrl:
+          type: string
+        categories:
+          type: array
+          items:
+            type: string
+        priceRange:
+          type: string
+        openNow:
+          type: boolean
+        phone:
+          type: ["string", "null"]
+        description:
+          type: ["string", "null"]
+        openingTime:
+          type: ["string", "null"]
+        closingTime:
+          type: ["string", "null"]
+        featured:
+          type: boolean
+
+    SalonDetail:
+      allOf:
+        - $ref: "#/components/schemas/Salon"
+        - type: object
+          properties:
+            services:
+              type: array
+              items:
+                $ref: "#/components/schemas/Service"
+            reviews:
+              type: array
+              items:
+                $ref: "#/components/schemas/Review"
+            gallery:
+              type: array
+              items:
+                type: string
+
+    SalonInput:
+      type: object
+      required: [name, area, address, phone, description, priceRange, openingTime, closingTime, imageUrl]
+      properties:
+        name:
+          type: string
+        area:
+          type: string
+        address:
+          type: string
+        phone:
+          type: string
+        description:
+          type: string
+        priceRange:
+          type: string
+        openingTime:
+          type: string
+        closingTime:
+          type: string
+        imageUrl:
+          type: string
+        categories:
+          type: array
+          items:
+            type: string
+
+    Service:
+      type: object
+      required: [id, salonId, name, category, price, duration]
+      properties:
+        id:
+          type: integer
+        salonId:
+          type: integer
+        name:
+          type: string
+        category:
+          type: string
+        price:
+          type: number
+        duration:
+          type: integer
+        description:
+          type: ["string", "null"]
+        popular:
+          type: boolean
+
+    ServiceInput:
+      type: object
+      required: [salonId, name, category, price, duration]
+      properties:
+        salonId:
+          type: integer
+        name:
+          type: string
+        category:
+          type: string
+        price:
+          type: number
+        duration:
+          type: integer
+        description:
+          type: string
+
+    Booking:
+      type: object
+      required: [id, salonId, salonName, serviceId, serviceName, customerName, customerPhone, appointmentDate, appointmentTime, status, totalPrice]
+      properties:
+        id:
+          type: integer
+        salonId:
+          type: integer
+        salonName:
+          type: string
+        serviceId:
+          type: integer
+        serviceName:
+          type: string
+        customerName:
+          type: string
+        customerPhone:
+          type: string
+        appointmentDate:
+          type: string
+        appointmentTime:
+          type: string
+        status:
+          type: string
+        totalPrice:
+          type: number
+        notes:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+
+    BookingInput:
+      type: object
+      required: [salonId, serviceId, customerName, customerPhone, appointmentDate, appointmentTime]
+      properties:
+        salonId:
+          type: integer
+        serviceId:
+          type: integer
+        customerName:
+          type: string
+        customerPhone:
+          type: string
+        appointmentDate:
+          type: string
+        appointmentTime:
+          type: string
+        notes:
+          type: string
+
+    BookingStatusUpdate:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+
+    Review:
+      type: object
+      required: [id, salonId, customerName, rating, comment, createdAt]
+      properties:
+        id:
+          type: integer
+        salonId:
+          type: integer
+        customerName:
+          type: string
+        rating:
+          type: integer
+        comment:
+          type: string
+        createdAt:
+          type: string
+        serviceName:
+          type: ["string", "null"]
+
+    ReviewInput:
+      type: object
+      required: [customerName, rating, comment]
+      properties:
+        customerName:
+          type: string
+        rating:
+          type: integer
+        comment:
+          type: string
+        serviceName:
+          type: string
+
+    Category:
+      type: object
+      required: [id, name, icon, salonCount]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        icon:
+          type: string
+        salonCount:
+          type: integer
+
+    Area:
+      type: object
+      required: [name, salonCount]
+      properties:
+        name:
+          type: string
+        salonCount:
+          type: integer
+
+    MarketplaceStats:
+      type: object
+      required: [totalSalons, totalServices, totalBookings, avgRating]
+      properties:
+        totalSalons:
+          type: integer
+        totalServices:
+          type: integer
+        totalBookings:
+          type: integer
+        avgRating:
+          type: number
+        topAreas:
+          type: array
+          items:
+            $ref: "#/components/schemas/Area"
