@@ -12,11 +12,19 @@ const HYDERABAD_AREAS = [
   "Begumpet", "Kondapur", "Miyapur", "LB Nagar", "Dilsukhnagar",
 ];
 
+function getEmailFromUrl() {
+  try {
+    return new URLSearchParams(window.location.search).get("email") ?? "";
+  } catch {
+    return "";
+  }
+}
+
 export default function RegisterPage() {
   const [, setLocation] = useLocation();
   const { register } = useAuth();
   const [form, setForm] = useState<RegisterData & { confirmPassword: string }>({
-    name: "", email: "", password: "", confirmPassword: "",
+    name: "", email: getEmailFromUrl(), password: "", confirmPassword: "",
     phone: "", address: "", area: "",
     latitude: undefined, longitude: undefined,
   });

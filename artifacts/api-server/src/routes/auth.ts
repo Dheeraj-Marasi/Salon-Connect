@@ -73,13 +73,13 @@ router.post("/auth/login", async (req, res): Promise<void> => {
 
   const [user] = await db.select().from(usersTable).where(eq(usersTable.email, email));
   if (!user) {
-    res.status(401).json({ error: "Invalid email or password." });
+    res.status(404).json({ error: "No account found with this email.", code: "EMAIL_NOT_FOUND" });
     return;
   }
 
   const valid = await bcrypt.compare(password, user.passwordHash);
   if (!valid) {
-    res.status(401).json({ error: "Invalid email or password." });
+    res.status(401).json({ error: "Incorrect password. Please try again." });
     return;
   }
 

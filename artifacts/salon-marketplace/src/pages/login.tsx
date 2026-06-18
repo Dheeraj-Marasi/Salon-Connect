@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useLocation, Link } from "wouter";
-import { Scissors, Eye, EyeOff, LogIn } from "lucide-react";
+import { Scissors, Eye, EyeOff, LogIn, UserPlus } from "lucide-react";
 import { useAuth } from "@/contexts/auth-context";
+import { ApiError } from "@/contexts/auth-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,17 +13,23 @@ export default function LoginPage() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [isNewUser, setIsNewUser] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setIsNewUser(false);
     setLoading(true);
     try {
       await login(form.email, form.password);
       setLocation("/account");
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Login failed. Please try again.");
+      if (err instanceof ApiError && err.code === "EMAIL_NOT_FOUND") {
+        setIsNewUser(true);
+      } else {
+        setError(err instanceof Error ? err.message : "Login failed. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
@@ -41,6 +48,43 @@ export default function LoginPage() {
           <p className="text-muted-foreground">Sign in to manage your beauty appointments</p>
         </div>
 
+        {/* New-user suggestion banner */}
+        {isNewUser && (
+          <div className="mb-5 bg-primary/5 border border-primary/20 rounded-2xl p-5">
+            <div className="flex items-start gap-3">
+              <div className="mt-0.5 shrink-0 bg-primary/10 rounded-full p-1.5">
+                <UserPlus className="h-4 w-4 text-primary" />
+              </div>
+              <div className="flex-1">
+                <p className="font-semibold text-foreground text-sm mb-0.5">
+                  Looks like you're new here!
+                </p>
+                <p className="text-sm text-muted-foreground mb-3">
+                  No account found for{" "}
+                  <span className="font-medium text-foreground">{form.email}</span>.
+                  Create a free account to start booking at Hyderabad's top salons.
+                </p>
+                <div className="flex gap-2">
+                  <Link href={`/register?email=${encodeURIComponent(form.email)}`}>
+                    <Button size="sm" className="h-8 text-xs px-4">
+                      <UserPlus className="h-3.5 w-3.5 mr-1.5" />
+                      Create a free account
+                    </Button>
+                  </Link>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="h-8 text-xs px-3 text-muted-foreground"
+                    onClick={() => setIsNewUser(false)}
+                  >
+                    Try again
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Card */}
         <div className="bg-card border rounded-2xl shadow-sm p-8">
           <form onSubmit={handleSubmit} className="space-y-5">
@@ -51,7 +95,11 @@ export default function LoginPage() {
                 type="email"
                 placeholder="you@example.com"
                 value={form.email}
-                onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
+                onChange={e => {
+                  setForm(f => ({ ...f, email: e.target.value }));
+                  setIsNewUser(false);
+                  setError("");
+                }}
                 required
                 autoComplete="email"
                 className="h-11"
@@ -66,7 +114,10 @@ export default function LoginPage() {
                   type={showPassword ? "text" : "password"}
                   placeholder="Enter your password"
                   value={form.password}
-                  onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
+                  onChange={e => {
+                    setForm(f => ({ ...f, password: e.target.value }));
+                    setError("");
+                  }}
                   required
                   autoComplete="current-password"
                   className="h-11 pr-10"

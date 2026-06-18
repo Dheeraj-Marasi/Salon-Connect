@@ -47,6 +47,14 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 
 const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
 
+export class ApiError extends Error {
+  code?: string;
+  constructor(message: string, code?: string) {
+    super(message);
+    this.code = code;
+  }
+}
+
 async function apiFetch(path: string, options?: RequestInit) {
   const res = await fetch(`${BASE}${path}`, {
     ...options,
@@ -57,7 +65,7 @@ async function apiFetch(path: string, options?: RequestInit) {
     },
   });
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error ?? "Request failed");
+  if (!res.ok) throw new ApiError(data.error ?? "Request failed", data.code);
   return data;
 }
 
