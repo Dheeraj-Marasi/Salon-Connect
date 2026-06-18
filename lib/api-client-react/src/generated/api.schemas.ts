@@ -140,6 +140,52 @@ export interface MarketplaceStats {
   topAreas?: Area[];
 }
 
+export interface AuthUser {
+  id: number;
+  name: string;
+  email: string;
+  /** @nullable */
+  phone?: string | null;
+  /** @nullable */
+  address?: string | null;
+  /** @nullable */
+  area?: string | null;
+  /** @nullable */
+  latitude?: number | null;
+  /** @nullable */
+  longitude?: number | null;
+  createdAt?: string;
+}
+
+export interface RegisterInput {
+  name: string;
+  email: string;
+  password: string;
+  phone?: string;
+  address?: string;
+  area?: string;
+  latitude?: number;
+  longitude?: number;
+}
+
+export interface LoginInput {
+  email: string;
+  password: string;
+}
+
+export interface UpdateProfileInput {
+  name?: string;
+  phone?: string;
+  address?: string;
+  area?: string;
+  latitude?: number;
+  longitude?: number;
+}
+
+export interface SuccessMessage {
+  message: string;
+}
+
 export type ListSalonsParams = {
 category?: string;
 area?: string;

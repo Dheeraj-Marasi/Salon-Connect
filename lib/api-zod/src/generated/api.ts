@@ -9,6 +9,91 @@ import * as zod from 'zod';
 
 
 /**
+ * @summary Register a new user
+ */
+export const RegisterBody = zod.object({
+  "name": zod.string(),
+  "email": zod.string(),
+  "password": zod.string(),
+  "phone": zod.string().optional(),
+  "address": zod.string().optional(),
+  "area": zod.string().optional(),
+  "latitude": zod.number().optional(),
+  "longitude": zod.number().optional()
+})
+
+
+/**
+ * @summary Login with email and password
+ */
+export const LoginBody = zod.object({
+  "email": zod.string(),
+  "password": zod.string()
+})
+
+export const LoginResponse = zod.object({
+  "id": zod.number(),
+  "name": zod.string(),
+  "email": zod.string(),
+  "phone": zod.string().nullish(),
+  "address": zod.string().nullish(),
+  "area": zod.string().nullish(),
+  "latitude": zod.number().nullish(),
+  "longitude": zod.number().nullish(),
+  "createdAt": zod.string().optional()
+})
+
+
+/**
+ * @summary Logout
+ */
+export const LogoutResponse = zod.object({
+  "message": zod.string()
+})
+
+
+/**
+ * @summary Get current logged-in user
+ */
+export const GetMeResponse = zod.object({
+  "id": zod.number(),
+  "name": zod.string(),
+  "email": zod.string(),
+  "phone": zod.string().nullish(),
+  "address": zod.string().nullish(),
+  "area": zod.string().nullish(),
+  "latitude": zod.number().nullish(),
+  "longitude": zod.number().nullish(),
+  "createdAt": zod.string().optional()
+})
+
+
+/**
+ * @summary Update current user profile
+ */
+export const UpdateProfileBody = zod.object({
+  "name": zod.string().optional(),
+  "phone": zod.string().optional(),
+  "address": zod.string().optional(),
+  "area": zod.string().optional(),
+  "latitude": zod.number().optional(),
+  "longitude": zod.number().optional()
+})
+
+export const UpdateProfileResponse = zod.object({
+  "id": zod.number(),
+  "name": zod.string(),
+  "email": zod.string(),
+  "phone": zod.string().nullish(),
+  "address": zod.string().nullish(),
+  "area": zod.string().nullish(),
+  "latitude": zod.number().nullish(),
+  "longitude": zod.number().nullish(),
+  "createdAt": zod.string().optional()
+})
+
+
+/**
  * @summary Health check
  */
 export const HealthCheckResponse = zod.object({

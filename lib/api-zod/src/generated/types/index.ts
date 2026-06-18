@@ -7,6 +7,7 @@
  */
 
 export * from './area';
+export * from './authUser';
 export * from './booking';
 export * from './bookingInput';
 export * from './bookingStatusUpdate';
@@ -15,7 +16,9 @@ export * from './healthStatus';
 export * from './listBookingsParams';
 export * from './listSalonsParams';
 export * from './listServicesParams';
+export * from './loginInput';
 export * from './marketplaceStats';
+export * from './registerInput';
 export * from './review';
 export * from './reviewInput';
 export * from './salon';
@@ -23,3 +26,5 @@ export * from './salonDetail';
 export * from './salonInput';
 export * from './service';
 export * from './serviceInput';
+export * from './successMessage';
+export * from './updateProfileInput';
