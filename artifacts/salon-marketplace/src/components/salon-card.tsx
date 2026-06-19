@@ -1,22 +1,51 @@
-import { MapPin, Star, Clock, ArrowRight } from "lucide-react";
+import { MapPin, Star, Clock, ArrowRight, GitCompareArrows } from "lucide-react";
 import { Link } from "wouter";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
+import { useCompare } from "@/contexts/compare-context";
 import { type Salon } from "@workspace/api-client-react";
 
 export function SalonCard({ salon }: { salon: Salon }) {
-  // Use generated images randomly or from data
-  // For the sake of aesthetics, we'll try to map the ID or just use the imageUrl provided
   const imgUrl = salon.imageUrl || `/images/salon-${(salon.id % 5) + 1}.png`;
+  const { addToCompare, removeFromCompare, isInCompare, compareList } = useCompare();
+  const inCompare = isInCompare(salon.id);
+  const compareFull = compareList.length >= 2 && !inCompare;
+
+  const handleCompare = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (inCompare) {
+      removeFromCompare(salon.id);
+    } else if (!compareFull) {
+      addToCompare(salon);
+    }
+  };
 
   return (
     <div className="group flex flex-col bg-card rounded-2xl border overflow-hidden hover:shadow-lg transition-all duration-300">
       <div className="relative aspect-[4/3] overflow-hidden bg-muted">
-        <img 
-          src={imgUrl} 
+        <img
+          src={imgUrl}
           alt={salon.name}
           className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
         />
+
+        {/* Compare toggle */}
+        <button
+          onClick={handleCompare}
+          title={compareFull ? "Remove a salon to compare this one" : inCompare ? "Remove from comparison" : "Add to comparison"}
+          className={`absolute top-3 left-3 z-10 flex items-center gap-1.5 text-xs font-medium px-2.5 py-1.5 rounded-full shadow backdrop-blur-sm transition-all
+            ${inCompare
+              ? "bg-primary text-primary-foreground"
+              : compareFull
+              ? "bg-black/40 text-white/50 cursor-not-allowed"
+              : "bg-white/90 text-foreground hover:bg-primary hover:text-primary-foreground"
+            }`}
+        >
+          <GitCompareArrows className="w-3.5 h-3.5" />
+          {inCompare ? "Added" : "Compare"}
+        </button>
+
         <div className="absolute top-3 right-3 flex gap-2">
           {salon.openNow ? (
             <Badge className="bg-white/90 text-green-600 hover:bg-white border-none shadow-sm backdrop-blur-sm">Open Now</Badge>
@@ -32,7 +61,7 @@ export function SalonCard({ salon }: { salon: Salon }) {
           ))}
         </div>
       </div>
-      
+
       <div className="p-5 flex flex-col flex-1">
         <div className="flex justify-between items-start mb-2">
           <h3 className="font-semibold text-lg text-foreground line-clamp-1 group-hover:text-primary transition-colors">
@@ -43,14 +72,14 @@ export function SalonCard({ salon }: { salon: Salon }) {
             <span>{salon.rating.toFixed(1)}</span>
           </div>
         </div>
-        
+
         <div className="flex items-center gap-1.5 text-sm text-muted-foreground mb-4">
           <MapPin className="w-4 h-4 shrink-0" />
           <span className="line-clamp-1">{salon.area}</span>
           <span className="mx-1.5 opacity-50">•</span>
           <span className="font-medium text-foreground">{salon.priceRange}</span>
         </div>
-        
+
         <div className="mt-auto pt-4 border-t flex items-center justify-between">
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <Clock className="w-3.5 h-3.5" />
