@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/contexts/auth-context";
 import { CompareProvider } from "@/contexts/compare-context";
 import { CompareBar } from "@/components/compare-bar";
+import { Chatbot } from "@/components/chatbot";
 import NotFound from "@/pages/not-found";
 
 import HomePage from "@/pages/home";
@@ -37,6 +38,7 @@ function Router() {
         <Route component={NotFound} />
       </Switch>
       <CompareBar />
+      <Chatbot />
     </>
   );
 }
